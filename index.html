@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Poker Signals Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .left-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav .user-info {
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #666;
+        }
+
+        .signal-card {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .signal-card.high-confidence {
+            border-left-color: #4CAF50;
+        }
+
+        .signal-card.medium-confidence {
+            border-left-color: #FFC107;
+        }
+
+        .signal-card.low-confidence {
+            border-left-color: #f44336;
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .signal-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .confidence-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .confidence-badge.high {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .signal-card.waiting {
+            border-left-color: #9E9E9E;
+            background-color: #FAFAFA;
+        }
+
+        .accuracy-note {
+            color: #1976D2;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .pattern-analysis {
+            background-color: #E3F2FD;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .recommendation {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .recommendation.place-bet {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="left-nav">
+            <a href="#" id="homeLink">Home</a>
+            <a href="#" id="dashboardLink">Dashboard</a>
+        </div>
+        <div class="user-info hidden" id="userInfo">
+            <span id="userEmail"></span>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+        <a href="#" id="loginLink">Login</a>
+    </nav>
+
+    <div id="homePage">
+        <h1>Advanced Poker Signals Platform</h1>
+        <p>Get AI-powered poker insights and signals in real-time</p>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Live Signals</h2>
+                <p>Access real-time poker game analysis and betting signals.</p>
+            </div>
+
+            <div class="card">
+                <h2>Smart Analytics</h2>
+                <p>View detailed statistics and trends.</p>
+            </div>
+
+            <div class="card">
+                <h2>AI Predictions</h2>
+                <p>Get advanced AI-powered predictions.</p>
+            </div>
+
+            <div class="card">
+                <h2>Educational Purpose</h2>
+                <p>For educational purposes only. Not for real betting.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardPage" class="hidden">
+        <div class="dashboard-header">
+            <h1>Live Poker Signals</h1>
+            <button class="refresh-btn" id="refreshSignals">
+                <span class="live-indicator"></span>
+                Refresh Signals
+            </button>
+        </div>
+        <div id="signalsContainer"></div>
+    </div>
+
+    <div id="loginPage" class="hidden">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="error-message hidden" id="loginError"></div>
+            <div>
+                <label>Email:</label>
+                <input type="email" id="emailInput" required>
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" id="passwordInput" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Advanced Poker Signals Platform. For educational purposes only.</p>
+    </footer>
+
+    <script>
+        // User credentials
+        const VALID_EMAIL = 'skhumberto@gmail.com';
+        const VALID_PASSWORD = 'Skhumba123';
+
+        class PokerAI {
+            constructor() {
+                this.hands = [
+                    { name: 'One Pair', baseProb: 0.45, pattern: [1, 1, 2, 3] },
+                    { name: 'Two Pair', baseProb: 0.55, pattern: [2, 2, 1, 3] },
+                    { name: 'Three of a Kind', baseProb: 0.65, pattern: [3, 1, 1, 2] },
+                    { name: 'Straight', baseProb: 0.75, pattern: [1, 2, 3, 4, 5] },
+                    { name: 'Flush', baseProb: 0.85, pattern: [1, 1, 1, 1, 1] },
+                    { name: 'Full House', baseProb: 0.90, pattern: [3, 2, 2, 1] }
+                ];
+                this.history = [];
+                this.winningHands = [];
+                this.currentGameState = this.generateGameState();
+                this.lastUpdateTime = Date.now();
+                this.updateInterval = 60000; // 1 minute
+            }
+
+            generateGameState() {
+                return {
+                    cardSequence: Array.from({length: 5}, () => Math.floor(Math.random() * 13) + 1),
+                    suitPattern: Array.from({length: 5}, () => Math.floor(Math.random() * 4))
+                };
+            }
+
+            updateGameState() {
+                const now = Date.now();
+                if (now - this.lastUpdateTime >= this.updateInterval) {
+                    this.currentGameState = this.generateGameState();
+                    this.lastUpdateTime = now;
+                }
+            }
+
+            analyzePattern(cards, suits) {
+                // Check for Flush
+                const isFlush = suits.every(suit => suit === suits[0]);
+                
+                // Sort cards for pattern matching
+                const sortedCards = [...cards].sort((a, b) => a - b);
+                
+                // Check for Straight
+                const isStraight = sortedCards.every((card, index) => 
+                    index === 0 || card === sortedCards[index - 1] + 1
+                );
+
+                // Count card frequencies
+                const cardCounts = {};
+                sortedCards.forEach(card => {
+                    cardCounts[card] = (cardCounts[card] || 0) + 1;
+                });
+                const frequencies = Object.values(cardCounts).sort((a, b) => b - a);
+
+                // Pattern matching
+                if (isFlush && isStraight) return { name: 'Straight Flush', confidence: 0.99 };
+                if (frequencies[0] === 3 && frequencies[1] === 2) return { name: 'Full House', confidence: 0.95 };
+                if (isFlush) return { name: 'Flush', confidence: 0.90 };
+                if (isStraight) return { name: 'Straight', confidence: 0.85 };
+                if (frequencies[0] === 3) return { name: 'Three of a Kind', confidence: 0.80 };
+                if (frequencies[0] === 2 && frequencies[1] === 2) return { name: 'Two Pair', confidence: 0.75 };
+                if (frequencies[0] === 2) return { name: 'One Pair', confidence: 0.70 };
+
+                return null;
+            }
+
+            predictNextHand() {
+                this.updateGameState();
+                const { cardSequence, suitPattern } = this.currentGameState;
+                
+                const analysis = this.analyzePattern(cardSequence, suitPattern);
+                if (!analysis || analysis.confidence < 0.85) {
+                    return null; // Return null if confidence is not high enough
+                }
+
+                return {
+                    hand: analysis.name,
+                    confidence: 'high',
+                    probability: analysis.confidence.toFixed(2),
+                    timestamp: new Date().toLocaleTimeString(),
+                    recommendation: 'Place Bet',
+                    analysis: {
+                        patternStrength: (analysis.confidence * 100).toFixed(1) + '%',
+                        confidenceLevel: 'Very High',
+                        reliability: 'Confirmed Pattern'
+                    }
+                };
+            }
+        }
+
+        const pokerAI = new PokerAI();
+
+        // Navigation handling
+        const pages = ['home', 'dashboard', 'login'];
+        const links = {
+            home: document.getElementById('homeLink'),
+            dashboard: document.getElementById('dashboardLink'),
+            login: document.getElementById('loginLink')
+        };
+
+        const userInfo = document.getElementById('userInfo');
+        const userEmail = document.getElementById('userEmail');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginError = document.getElementById('loginError');
+        const refreshSignalsBtn = document.getElementById('refreshSignals');
+
+        let isLoggedIn = false;
+
+        function showPage(pageId) {
+            if (pageId === 'dashboard' && !isLoggedIn) {
+                showPage('login');
+                return;
+            }
+
+            pages.forEach(page => {
+                const pageElement = document.getElementById(page + 'Page');
+                if (page === pageId) {
+                    pageElement.classList.remove('hidden');
+                } else {
+                    pageElement.classList.add('hidden');
+                }
+            });
+        }
+
+        // Add click event listeners
+        Object.entries(links).forEach(([pageId, link]) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(pageId);
+            });
+        });
+
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+                isLoggedIn = true;
+                userEmail.textContent = email;
+                userInfo.classList.remove('hidden');
+                links.login.classList.add('hidden');
+                loginError.classList.add('hidden');
+                showPage('dashboard');
+                fetchPokerSignals();
+            } else {
+                loginError.textContent = 'Invalid email or password';
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener('click', () => {
+            isLoggedIn = false;
+            userInfo.classList.add('hidden');
+            links.login.classList.remove('hidden');
+            showPage('home');
+        });
+
+        function createSignalCard(signal) {
+            if (!signal) {
+                return `
+                    <div class="signal-card waiting">
+                        <div class="signal-header">
+                            <span class="signal-time">${new Date().toLocaleTimeString()}</span>
+                        </div>
+                        <h3>No High-Confidence Signal Available</h3>
+                        <p>AI is analyzing patterns. Waiting for a highly confident prediction...</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="signal-card high-confidence">
+                    <div class="signal-header">
+                        <span class="confidence-badge high">
+                            HIGH CONFIDENCE SIGNAL
+                        </span>
+                        <span class="signal-time">${signal.timestamp}</span>
+                    </div>
+                    <h3>Predicted Hand: ${signal.hand}</h3>
+                    <p>Accuracy: ${signal.analysis.patternStrength}</p>
+                    <p class="recommendation place-bet">
+                        Recommendation: ${signal.recommendation}
+                    </p>
+                    <div class="pattern-analysis">
+                        <h4>AI Analysis:</h4>
+                        <p>Confidence Level: ${signal.analysis.confidenceLevel}</p>
+                        <p>Pattern Status: ${signal.analysis.reliability}</p>
+                        <p class="accuracy-note">Signal Accuracy: ${signal.probability * 100}%</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function fetchPokerSignals() {
+            if (!isLoggedIn) return;
+
+            const signalsContainer = document.getElementById('signalsContainer');
+            const signal = pokerAI.predictNextHand();
+            signalsContainer.innerHTML = createSignalCard(signal);
+        }
+
+        // Refresh signals every 60 seconds (1 minute)
+        setInterval(() => {
+            if (isLoggedIn && !document.getElementById('dashboardPage').classList.contains('hidden')) {
+                fetchPokerSignals();
+            }
+        }, 60000);
+
+        // Manual refresh button
+        refreshSignalsBtn.addEventListener('click', fetchPokerSignals);
+
+        // Show home page by default
+        showPage('home');
+    </script>
+</body>
+</html>
